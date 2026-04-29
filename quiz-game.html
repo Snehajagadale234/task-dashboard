@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Quiz Game</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #eef2f7;
+    margin: 0;
+}
+
+header {
+    background: #3f51b5;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+.container {
+    width: 70%;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 8px;
+}
+
+button {
+    padding: 10px;
+    margin: 5px 0;
+    width: 100%;
+    cursor: pointer;
+}
+
+.correct {
+    background: #4CAF50;
+    color: white;
+}
+
+.wrong {
+    background: #f44336;
+    color: white;
+}
+
+.progress {
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    width: 0%;
+    border-radius: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Ultimate Quiz Game</h1>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h3 id="question">Question here</h3>
+        <div id="answers"></div>
+    </div>
+
+    <div class="card">
+        <h3>Score: <span id="score">0</span></h3>
+        <p>Question <span id="current">1</span> / <span id="total"></span></p>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+const quiz = [
+    {
+        q: "What is HTML?",
+        a: ["Programming Language", "Markup Language", "Database", "Operating System"],
+        correct: 1
+    },
+    {
+        q: "Which is used for styling?",
+        a: ["HTML", "CSS", "Java", "Python"],
+        correct: 1
+    },
+    {
+        q: "Which is JavaScript framework?",
+        a: ["React", "HTML", "CSS", "SQL"],
+        correct: 0
+    },
+    {
+        q: "Which tag is for paragraph?",
+        a: ["<div>", "<p>", "<h1>", "<span>"],
+        correct: 1
+    },
+    {
+        q: "Which is backend language?",
+        a: ["HTML", "CSS", "JavaScript", "Java"],
+        correct: 3
+    }
+];
+
+let index = 0;
+let score = 0;
+
+document.getElementById("total").innerText = quiz.length;
+
+function loadQuestion() {
+    const q = quiz[index];
+    document.getElementById("question").innerText = q.q;
+
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    q.a.forEach((ans, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = ans;
+        btn.onclick = () => checkAnswer(i, btn);
+        answersDiv.appendChild(btn);
+    });
+
+    updateProgress();
+}
+
+function checkAnswer(i, btn) {
+    const correct = quiz[index].correct;
+
+    const buttons = document.querySelectorAll("#answers button");
+
+    buttons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === correct) b.classList.add("correct");
+        if (idx === i && i !== correct) b.classList.add("wrong");
+    });
+
+    if (i === correct) {
+        score++;
+        document.getElementById("score").innerText = score;
+    }
+
+    setTimeout(() => {
+        index++;
+        if (index < quiz.length) {
+            document.getElementById("current").innerText = index + 1;
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }, 1000);
+}
+
+function updateProgress() {
+    const percent = (index / quiz.length) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+}
+
+function showResult() {
+    document.querySelector(".container").innerHTML = `
+        <div class="card">
+            <h2>Quiz Completed 🎉</h2>
+            <h3>Your Score: ${score} / ${quiz.length}</h3>
+            <button onclick="location.reload()">Play Again</button>
+        </div>
+    `;
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
